@@ -32,7 +32,7 @@
       <q-item 
         v-ripple
         v-for='(task, index) in tasks'
-        :key='task.title'
+        :key='task.id'
         @click="task.done = !task.done"
         :class="{'done bg-blue-1' : task.done}"
         clickable
@@ -76,13 +76,63 @@
   </q-page>
 </template>
 
-<script>
-export default {
+<script setup>
+
+import { ref } from 'vue'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
+const newTask = ref('')
+const tasks = ref([
+  {
+    id: 1,
+    title: 'Do workout',
+    done: false
+  },
+  {
+    id: 2,
+    title: 'Eat breakfast',
+    done: false
+  },
+  {
+    id: 3,
+    title: 'Do programming',
+    done: false
+  }
+])
+
+const addTask = () => {
+  tasks.value.push({
+    id: tasks.value.length +1,
+    title: newTask.value,
+    done: false
+  })
+  newTask.value = ''
+}
+
+const deleteTask = (index) => {
+  $q.dialog({
+        dark: true,
+        title: 'Confirm',
+        message: 'Would you like to delete this task?',
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        tasks.value.splice(index, 1)
+        $q.notify({
+          type: 'info',
+          message: 'Task deleted',
+          color: 'dark'
+        })
+      })
+    }
+
+/*export default {
   data() {
     return {
       newTask: '',
       tasks: [
-        /**{
+        {
           title: 'Do workout',
           done: false
         },
@@ -93,7 +143,7 @@ export default {
         {
           title: 'Do programming',
           done: false
-        }**/
+        }
       ]
     }
   },
@@ -122,7 +172,7 @@ export default {
       this.newTask = ''
     }
   }
-}
+}*/
 
 </script>
 

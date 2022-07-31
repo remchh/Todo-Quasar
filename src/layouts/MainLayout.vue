@@ -23,7 +23,7 @@
         v-model="leftDrawerOpen"
         show-if-above
         :width="200"
-        :breakpoint="400"
+        :breakpoint="600"
       >
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list padding>
@@ -65,7 +65,7 @@
               <img src="https://cdn.quasar.dev/img/boy-avatar.png">
             </q-avatar>
             <div class="text-weight-bold">Rafael Mejia</div>
-            <div>@rmejia13</div>
+            <div>@remch13</div>
           </div>
         </q-img>
       </q-drawer>
