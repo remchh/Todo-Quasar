@@ -19,6 +19,7 @@
             flat 
             icon="add"
             @click="addTask"
+            :disabled='!newTask'
           />
         </template>
       </q-input>
@@ -33,7 +34,7 @@
         v-ripple
         v-for='(task, index) in tasks'
         :key='task.id'
-        @click="task.done = !task.done"
+        @click="toggleCheck(task.id)"
         :class="{'done bg-blue-1' : task.done}"
         clickable
       >
@@ -52,7 +53,7 @@
           side
         >
           <q-btn 
-            @click.stop="deleteTask(index)"
+            @click.stop="deleteTask(task.id)"
             flat 
             round 
             dense
@@ -78,13 +79,17 @@
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
+import { collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, orderBy } from "firebase/firestore";
+import { db } from 'src/firebase'
 
 const $q = useQuasar()
+const tasksCollection = collection(db, 'tasks')
+const tasksCollectionQuery = query(tasksCollection, orderBy('date', 'desc'))
 const newTask = ref('')
 const tasks = ref([
-  {
+ /* {
     id: 1,
     title: 'Do workout',
     done: false
@@ -98,19 +103,35 @@ const tasks = ref([
     id: 3,
     title: 'Do programming',
     done: false
-  }
+  }*/
 ])
 
+onMounted(() => {
+  onSnapshot(tasksCollectionQuery, (querySnapshot) => {
+    const fbTasks = []
+    querySnapshot.forEach((doc) => {
+        const task = {
+          id: doc.id,
+          title: doc.data().title,
+          done: doc.data().done
+        }
+        fbTasks.push(task)
+      })
+      tasks.value = fbTasks
+    })
+  })
+
+
 const addTask = () => {
-  tasks.value.push({
-    id: tasks.value.length +1,
+  addDoc(tasksCollection, {
     title: newTask.value,
-    done: false
+    done: false,
+    date: Date.now()
   })
   newTask.value = ''
 }
 
-const deleteTask = (index) => {
+const deleteTask = id => {
   $q.dialog({
         dark: true,
         title: 'Confirm',
@@ -118,7 +139,8 @@ const deleteTask = (index) => {
         cancel: true,
         persistent: true
       }).onOk(() => {
-        tasks.value.splice(index, 1)
+        /*tasks.value = tasks.value.filter(task => task.id !== id)*/
+        deleteDoc(doc(tasksCollection, id))
         $q.notify({
           type: 'info',
           message: 'Task deleted',
@@ -126,6 +148,14 @@ const deleteTask = (index) => {
         })
       })
     }
+
+const toggleCheck = id => {
+  const index = tasks.value.findIndex(task => task.id === id)
+
+  updateDoc(doc(tasksCollection, id ), {
+    done: !tasks.value[index].done
+  })
+}
 
 /*export default {
   data() {
