@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          To-Do App
+          To-Do Firebase App
         </q-toolbar-title>
 
         <div>{{todayDate}}</div>

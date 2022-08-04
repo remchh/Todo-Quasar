@@ -24,46 +24,53 @@
         </template>
       </q-input>
     </div>
-    <q-list 
-      class="bg-white"
-      separator
-      bordered  
-    >
 
-      <q-item 
-        v-ripple
+    <transition-group
+      appear
+      enter-active-class="animated fadeInUpBig slow"
+    >
+      <q-list 
         v-for='(task, index) in tasks'
         :key='task.id'
-        @click="toggleCheck(task.id)"
-        :class="{'done bg-blue-1' : task.done}"
-        clickable
+        class="bg-white"
+        separator
+        bordered  
       >
-        <q-item-section avatar>
-          <q-checkbox 
-            v-model="task.done" 
-            class="no-pointer-events"
-            color="primary" 
-          />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ task.title }}</q-item-label>
-        </q-item-section>
-        <q-item-section
-           v-if='task.done'
-          side
-        >
-          <q-btn 
-            @click.stop="deleteTask(task.id)"
-            flat 
-            round 
-            dense
-            color="primary" 
-            icon="delete" 
-          />
-        </q-item-section>
-      </q-item>
 
-    </q-list>
+        <q-item 
+          v-ripple
+          @click="toggleCheck(task.id)"
+          :class="{'done bg-blue-1' : task.done}"
+          clickable
+        >
+          <q-item-section avatar>
+            <q-checkbox 
+              v-model="task.done" 
+              class="no-pointer-events"
+              color="primary" 
+            />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ task.title }}</q-item-label>
+          </q-item-section>
+          <q-item-section
+            v-if='task.done'
+            side
+          >
+            <q-btn 
+              @click.stop="deleteTask(task.id)"
+              flat 
+              round 
+              dense
+              color="primary" 
+              icon="delete" 
+            />
+          </q-item-section>
+        </q-item>
+
+      </q-list>
+    </transition-group>
+
     <div v-if='!tasks.length' class="no-tasks absolute-center">
       <q-icon
         name="check"
